@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "description": "IMMO BURUNDI — Web. Real estate marketplace & brokerage frontend.",
-  "packageManager": "pnpm@12.5.1",
+  "packageManager": "pnpm@10.34.6",
   "engines": {
     "node": ">=20.0.0"
   },

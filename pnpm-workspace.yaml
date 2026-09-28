@@ -1,5 +1,8 @@
 packages:
   - "."
   - "packages/*"
-allowBuilds:
-  esbuild: true
+
+# pnpm 10 blocks lifecycle scripts by default. esbuild (a Vite dependency)
+# needs its install script to fetch its platform binary, so allowlist it.
+onlyBuiltDependencies:
+  - esbuild

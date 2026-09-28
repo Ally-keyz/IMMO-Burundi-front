@@ -11,13 +11,10 @@
 
 [build]
   base = "."
-  # pnpm is installed with npm rather than `corepack enable` on purpose.
-  # Corepack bundled with Node 20.18.1 carries the pre-rotation npm signing
-  # keys, so verifying pnpm's release signature fails with
-  # "Cannot find matching keyid". Installing the exact version from the
-  # registry sidesteps that and also guarantees the version matches the
-  # `packageManager` field (pnpm errors on a mismatch by default).
-  command = "npm install --global pnpm@12.5.1 && pnpm install --frozen-lockfile && pnpm --filter @immo/shared-types build && pnpm run build"
+  # pnpm is installed with npm rather than `corepack enable` so the build does
+  # not depend on corepack at all. The pinned 10.x line also guarantees the
+  # version matches the `packageManager` field, which pnpm enforces by default.
+  command = "npm install --global pnpm@10.34.6 && pnpm install --frozen-lockfile && pnpm --filter @immo/shared-types build && pnpm run build"
   publish = "dist"
 
 [build.environment]
@@ -27,17 +24,25 @@
   # Netlify migrated this site to the `noble-new-builds` image, which added an
   # "Install dependencies" stage that runs BEFORE build.command. That stage sees
   # pnpm-workspace.yaml, prints "pnpm workspaces detected", and installs pnpm
-  # through corepack. The corepack bundled with Node 20.18.1 only holds the
-  # pre-rotation npm signing keys, so it aborts with "Cannot find matching
-  # keyid" and the deploy dies before any of our code runs — which is why fixing
-  # build.command alone did not help.
+  # through corepack — so a break in corepack kills the deploy before any of
+  # our code runs, and nothing set inside build.command can rescue it.
   #
-  # Turning off corepack's signature check lets that stage install the version
-  # pinned in package.json ("packageManager"). Supply-chain integrity is still
-  # enforced: pnpm verifies every tarball against the sha512 hashes recorded in
-  # pnpm-lock.yaml, and --frozen-lockfile fails the build if it drifts.
+  # Two independent corepack problems had to be handled:
+  #
+  # 1. Signature keys. The corepack bundled with Node 20.18.1 only holds the
+  #    pre-rotation npm signing keys and aborts with "Cannot find matching
+  #    keyid". Disabling the redundant signature check lets it proceed; the
+  #    lockfile still pins every tarball by sha512 under --frozen-lockfile.
+  #
+  # 2. The pnpm binary path. Corepack up to 0.34.3 hardcodes `bin/pnpm.cjs`
+  #    instead of reading pnpm's `bin` field (nodejs/corepack#775). pnpm 11
+  #    moved that to `bin/pnpm.mjs` and pnpm 12 (a Rust rewrite) moved it to
+  #    the package root, so this corepack can never start them — it fails with
+  #    "Cannot find module .../bin/pnpm.cjs". pnpm 10 still ships
+  #    `bin/pnpm.cjs`, which is why the project is pinned to the 10.x line.
+  #    pnpm 12 also requires Node 22.13+ even to install via npm.
   COREPACK_INTEGRITY_KEYS = "0"
-  PNPM_VERSION = "12.5.1"
+  PNPM_VERSION = "10.34.6"
 
   # Netlify's post-build secret scanner fails the deploy when the value of any
   # env var set in the dashboard also appears in a repo file or in the build
@@ -50,7 +55,7 @@
   SECRETS_SCAN_OMIT_KEYS = "VITE_SITE_URL,SEO_API_BASE,VITE_API_BASE_URL,VITE_UPLOADS_BASE_URL,VITE_API_PROXY_TARGET"
 
 [dev]
-  command = "npm install --global pnpm@12.5.1 && pnpm install --frozen-lockfile && pnpm --filter @immo/shared-types build && pnpm run dev"
+  command = "npm install --global pnpm@10.34.6 && pnpm install --frozen-lockfile && pnpm --filter @immo/shared-types build && pnpm run dev"
   targetPort = 5173
   port = 5173
   autoLaunch = false
