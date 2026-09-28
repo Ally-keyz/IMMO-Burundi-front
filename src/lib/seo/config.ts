@@ -4,14 +4,14 @@
  * The canonical origin is read from the VITE_SITE_URL env var so that no
  * domain is hard-coded. Set it once at build time:
  *
- *   VITE_SITE_URL=https://www.immoburundi.bi
+ *   VITE_SITE_URL=https://immoburundi.netlify.app
  *
  * Everything that needs an absolute URL (canonical links, Open Graph,
  * sitemap.xml, JSON-LD @id) goes through absoluteUrl() so a staging build
  * can never emit production URLs by accident.
  */
 
-const DEFAULT_SITE_URL = 'https://www.immoburundi.bi';
+const DEFAULT_SITE_URL = 'https://immoburundi.netlify.app';
 
 function normaliseOrigin(value: string | undefined | null): string {
   const raw = (value ?? '').trim();

@@ -2,7 +2,7 @@
 #
 # Set these in Netlify → Site settings → Environment variables (and mirror them
 # in the Netlify UI for production deploys):
-#   VITE_SITE_URL      = https://www.immoburundi.bi   (required, drives canonical/OG/sitemap)
+#   VITE_SITE_URL      = https://immoburundi.netlify.app (required, drives canonical/OG/sitemap)
 #   SEO_API_BASE       = https://<api-host>/api
 #   SEO_FETCH_API      = 1
 #

@@ -18,7 +18,7 @@
  * pages are simply skipped and the build still succeeds.
  *
  * Config:
- *   VITE_SITE_URL   canonical origin (defaults to https://www.immoburundi.bi)
+ *   VITE_SITE_URL   canonical origin (defaults to https://immoburundi.netlify.app)
  *   SEO_API_BASE    API origin used to enrich the sitemap (default /api -> same origin)
  *   SEO_FETCH_API   set to 1 to prerender property pages from a running API
  */
@@ -49,7 +49,7 @@ function findRepoRoot(start) {
 const repoRoot = findRepoRoot(appDir);
 const distDir = path.join(appDir, 'dist');
 
-const DEFAULT_SITE_URL = 'https://www.immoburundi.bi';
+const DEFAULT_SITE_URL = 'https://immoburundi.netlify.app';
 const log = (...args) => console.log('[seo]', ...args);
 
 /* ── minimal .env reader (avoids a dotenv dependency) ─────────────── */
