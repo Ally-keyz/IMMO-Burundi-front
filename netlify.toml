@@ -24,6 +24,21 @@
   # Keep the toolchain in lockstep with package.json engines and .node-version.
   NODE_VERSION = "20.18.1"
 
+  # Netlify migrated this site to the `noble-new-builds` image, which added an
+  # "Install dependencies" stage that runs BEFORE build.command. That stage sees
+  # pnpm-workspace.yaml, prints "pnpm workspaces detected", and installs pnpm
+  # through corepack. The corepack bundled with Node 20.18.1 only holds the
+  # pre-rotation npm signing keys, so it aborts with "Cannot find matching
+  # keyid" and the deploy dies before any of our code runs — which is why fixing
+  # build.command alone did not help.
+  #
+  # Turning off corepack's signature check lets that stage install the version
+  # pinned in package.json ("packageManager"). Supply-chain integrity is still
+  # enforced: pnpm verifies every tarball against the sha512 hashes recorded in
+  # pnpm-lock.yaml, and --frozen-lockfile fails the build if it drifts.
+  COREPACK_INTEGRITY_KEYS = "0"
+  PNPM_VERSION = "12.5.1"
+
   # Netlify's post-build secret scanner fails the deploy when the value of any
   # env var set in the dashboard also appears in a repo file or in the build
   # output. The vars below are PUBLIC origins, not credentials: VITE_* values
