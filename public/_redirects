@@ -1,6 +1,0 @@
-# SPA fallback for Netlify / Cloudflare Pages.
-#
-# Static files (including the prerendered pages under /immobilier/* and
-# /property/*) are served before redirects are applied, so this rule only
-# catches routes that have no file on disk.
-/*    /index.html   200
