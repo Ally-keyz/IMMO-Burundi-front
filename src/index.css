@@ -1,0 +1,392 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ════════════════════════════════════════════════════════════════
+   DESIGN TOKENS  —  every visual decision lives here.
+   Change a variable once and the whole site restyles.
+   ════════════════════════════════════════════════════════════════ */
+:root {
+  /* ── Color (RGB triplets so Tailwind `/<alpha-value>` works) ── */
+  --immo-bg: 255 255 255;           /* page background              */
+  --immo-surface: 255 255 255;      /* cards / header / popovers    */
+  --immo-text: 25 25 25;            /* primary text     #191919      */
+  --immo-text-2: 107 107 107;       /* secondary text   #6B6B6B      */
+  --immo-text-3: 158 158 158;       /* fainter tertiary text         */
+  --immo-text-placeholder: 117 117 117; /* placeholders  #757575     */
+  --immo-field: 247 247 247;        /* input/fill       #F7F7F7      */
+  --immo-border: 229 229 229;       /* thin border      #E5E5E5      */
+  --immo-subtle: 247 247 247;       /* barely-there section band     */
+  --immo-ink: 25 25 25;             /* near-black pill buttons       */
+  --immo-accent: 255 225 53;        /* banana yellow  #FFE135        */
+  --immo-accent-strong: 230 178 0;  /* deeper yellow   #E6B200       */
+  --immo-brand: 0 87 255;           /* the site's main blue          */
+  --immo-on-accent: 25 25 25;       /* text on yellow — dark for contrast */
+  --immo-tile-accent: 27 95 255;    /* filter-tile accent overlay    */
+  --immo-tile-navy: 4 21 29;        /* filter-tile "Featured" navy   */
+  --immo-verified: 22 163 74;
+  --immo-partial: 202 138 4;
+  --immo-danger: 220 38 38;
+
+  /* Mid-tone gray ramp (flips with theme) */
+  --immo-gray-300: 212 212 212;
+  --immo-gray-400: 163 163 163;
+  --immo-gray-600: 82 82 82;
+  --immo-gray-700: 61 61 61;
+  --immo-gray-800: 43 43 43;
+
+  /* ── Radius ── */
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-tile: 8px;          /* filter/category tiles      */
+  --radius-card-image: 8px;    /* property card cover image  */
+  --radius-pill: 999px;
+
+  /* ── Layout ── */
+  --header-height: 64px;       /* desktop header (Studio)     */
+  --rail-collapsed: 76px;      /* icon-only sidebar rail       */
+  --rail-expanded: 252px;      /* labeled sidebar width        */
+  --row-height: 66px;          /* filter/search row            */
+  --tile-height: 66px;         /* category tiles               */
+  --gap-grid: 24px;            /* property card grid gutter    */
+  --page-padding: 36px;        /* desktop side padding         */
+
+  /* ── Spacing (base 8px — everything a multiple of it) ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* ── Typography (Studio-style scale — display face for page H1 + stat numerals) ── */
+  --font-sans: 'Roboto', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-display: 'YouTube Sans', 'Roboto', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --font-arabic: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', Arial, sans-serif;
+
+  --fs-h1: 1.75rem;           /* 28 — page H1 (display, 700) */
+  --fs-h2: 1rem;              /* 16 — card/section headers   */
+  --fs-h3: 0.875rem;          /* 14                          */
+  --fs-body: 0.875rem;        /* 14 — body text              */
+  --fs-meta: 0.75rem;         /* 12 — secondary text         */
+  --fs-ui: 0.875rem;          /* 14 — nav/buttons/tiles      */
+  --fs-search: 0.875rem;      /* 14 — search placeholder     */
+  --fs-bigstat: 2.25rem;      /* 36 — large stat numeral     */
+  --fs-card-agent: 0.8125rem; /* 13                          */
+  --fs-card-stats: 0.8125rem; /* 13                          */
+  --fs-card-title: 0.8125rem; /* 13                          */
+  --fs-card-loc: 0.75rem;     /* 12                          */
+  --fs-card-price: 0.8125rem; /* 13                          */
+
+  /* ── Elevation (almost flat) ── */
+  --shadow-soft: 0 1px 2px rgb(25 25 25 / 0.04), 0 2px 10px rgb(25 25 25 / 0.05);
+  --shadow-pop: 0 4px 16px rgb(25 25 25 / 0.08), 0 8px 28px rgb(25 25 25 / 0.1);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   DARK MODE — flips every semantic token (added by <html class="dark">)
+   ════════════════════════════════════════════════════════════════ */
+.dark {
+  --immo-bg: 0 0 0;                /* pure black — page              */
+  --immo-surface: 24 24 24;        /* near black — cards/header      */
+  --immo-text: 240 240 240;        /* primary text                   */
+  --immo-text-2: 163 163 163;      /* secondary text                 */
+  --immo-text-3: 115 115 115;      /* tertiary                       */
+  --immo-text-placeholder: 115 115 115;
+  --immo-field: 31 31 31;          /* input fill                     */
+  --immo-border: 48 48 48;         /* thin border                    */
+  --immo-subtle: 24 24 24;         /* section band                   */
+  /* Mid-tone gray ramp — inverted for dark UI */
+  --immo-gray-300: 64 64 64;        /* dials/borders                */
+  --immo-gray-400: 115 115 115;
+  --immo-gray-600: 163 163 163;
+  --immo-gray-700: 212 212 212;
+  --immo-gray-800: 229 229 229;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-bg text-gray-900 antialiased;
+    font-family: var(--font-sans);
+    font-size: var(--fs-body);
+    line-height: 1.5;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: rgb(var(--immo-text));
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-gray-900;
+    letter-spacing: 0;
+    font-weight: 700;
+  }
+
+  /* Page H1s + big numerals use the heavier display face for contrast. */
+  .page-title, h1 {
+    font-family: var(--font-display);
+  }
+
+  /* Arabic / RTL text gets an Arabic-capable font (§ addendum 1) */
+  [lang='ar'], [dir='rtl'], :lang(ar), :lang(sw) .ar, .font-arabic {
+    font-family: var(--font-arabic);
+  }
+
+  /* Visible, accessible keyboard focus everywhere — blue outline
+     stays high-contrast on the yellow accent */
+  :focus-visible {
+    outline: 2px solid rgb(var(--immo-brand));
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  ::selection {
+    background: rgb(var(--immo-accent) / 0.15);
+  }
+}
+
+@layer components {
+  /* Full-width page with side padding, max 2000px (§ addendum 3)
+     Note: custom `desktop:` screen can't be used inside `@apply`,
+     so the breakpoints are written as plain media queries. */
+  .container-page {
+    width: 100%;
+    max-width: 2000px;
+    margin-inline: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-page {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .container-page {
+      padding-left: 2.25rem;
+      padding-right: 2.25rem;
+    }
+  }
+
+  /* ── Buttons — fully-rounded pills, no sharp corners ─── */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 py-2.5 font-medium outline-none transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-primary {
+    @apply btn bg-accent text-ink hover:bg-accent-strong active:scale-[0.98] focus-visible:ring-4 focus-visible:ring-brand-300/50 focus-visible:outline-none;
+  }
+
+  .btn-primary:disabled {
+    @apply cursor-not-allowed bg-gray-200 text-gray-500 opacity-100;
+  }
+
+  .btn-dark {
+    @apply btn bg-ink text-white hover:bg-gray-800 active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply btn bg-field text-gray-800 hover:bg-gray-200;
+  }
+
+  .btn-outline {
+    @apply btn border border-gray-200 bg-surface text-gray-900 hover:border-gray-300 hover:bg-gray-50;
+  }
+
+  .btn-ghost {
+    @apply btn text-gray-600 hover:bg-gray-100 hover:text-gray-900;
+  }
+
+  .btn-danger {
+    @apply btn bg-notVerified text-white hover:bg-notVerified/90 active:scale-[0.98];
+  }
+
+  /* ── Form fields: light-gray filled, rounded, no heavy border ── */
+  .input {
+    @apply w-full rounded-2xl border border-transparent bg-field px-4 py-2.5 text-gray-900 outline-none transition-all duration-150 placeholder:text-placeholder hover:border-gray-300 focus:border-transparent focus:bg-surface focus:ring-4 focus:ring-brand-500/15;
+    font-size: var(--fs-body);
+    line-height: 1.5;
+  }
+
+  select.input {
+    @apply cursor-pointer;
+  }
+
+  .label {
+    @apply mb-1.5 block font-medium text-gray-700;
+    font-size: var(--fs-body);
+  }
+
+  /* ── Surfaces: flat panels with a thin border, no heavy shadow ── */
+  .card {
+    @apply rounded-xl border border-gray-200 bg-surface;
+  }
+
+  /* ── Typography ── */
+  .section-title {
+    @apply font-bold text-gray-900;
+    font-size: var(--fs-h2);
+    line-height: 1.3;
+  }
+
+  /* Studio-style page H1 — display face, large, one per page. */
+  .page-title {
+    font-size: var(--fs-h1);
+    line-height: 1.15;
+    font-weight: 700;
+    @apply text-gray-900;
+  }
+
+  /* Large stat numerals ("subscriber count" style). */
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: var(--fs-bigstat);
+    line-height: 1.1;
+    font-weight: 700;
+    @apply text-gray-900;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Studio card — rounded rect (12px), surface, thin border. */
+  .studio-card {
+    @apply rounded-xl border border-gray-200 bg-surface;
+  }
+
+  /* Studio text tabs — underline for active, no box/bg color change. */
+  .studio-tab {
+    @apply relative flex h-9 items-center whitespace-nowrap px-1.5 text-ui font-medium transition-colors;
+  }
+  .studio-tab::after {
+    content: '';
+    @apply absolute inset-x-0 bottom-0 h-[3px] rounded-t-full bg-gray-900 transition-opacity;
+    opacity: 0;
+  }
+  .studio-tab[aria-selected='true'] {
+    @apply text-gray-900;
+  }
+  .studio-tab[aria-selected='true']::after {
+    opacity: 1;
+  }
+  .studio-tab[aria-selected='false'] {
+    @apply text-gray-500 hover:text-gray-900;
+  }
+
+  /* Filter chips — small pills, primary fills, removable. */
+  .chip {
+    @apply inline-flex h-8 items-center gap-1.5 rounded-full border border-gray-200 bg-surface px-3 text-[13px] font-medium text-gray-800 transition-colors;
+  }
+  .chip-active {
+    @apply border-gray-200 bg-gray-100;
+  }
+}
+
+/* ── Custom scrollbar: thin + light ───────────────────────────── */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d9d9d9;
+  border-radius: 9999px;
+  border: 2px solid #ffffff;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #bbbbbb;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d9d9d9 transparent;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #3c3c3c;
+  border: 2px solid rgb(0 0 0);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
+
+.dark * {
+  scrollbar-color: #3c3c3c transparent;
+}
+
+/* Leaflet map container — neutral visible panel in dark mode while tiles load */
+.dark .leaflet-container {
+  background: #27272a;
+}
+.dark .leaflet-control-attribution {
+  background: rgba(39, 39, 42, 0.75);
+  color: #a1a1aa;
+}
+
+/* Horizontal scroll containers (chip rows / tile rows) */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hero card fills 70% of the visible screen, so the listings below start
+   above the fold on a laptop instead of being pushed off it.
+   dvh covers mobile browser chrome; fall back to vh where dvh is
+   unsupported. min-height (not height) so a short viewport still grows the
+   card instead of clipping the headline/toolbar/stats, which overflow-hidden
+   would cut. */
+.hero-height {
+  min-height: 70vh;
+}
+
+@supports (height: 1dvh) {
+  .hero-height {
+    min-height: 70dvh;
+  }
+}
+
+/* Prevent FOUC flash for skeleton shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -468px 0;
+  }
+  100% {
+    background-position: 468px 0;
+  }
+}
+
+/* Soft entrance for cards */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: rise 0.35s ease both;
+}

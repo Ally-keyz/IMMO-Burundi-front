@@ -1,0 +1,115 @@
+# Netlify deployment for this repo (IMMO-Burundi-front).
+#
+# Set these in Netlify → Site settings → Environment variables (and mirror them
+# in the Netlify UI for production deploys):
+#   VITE_SITE_URL      = https://www.immoburundi.bi   (required, drives canonical/OG/sitemap)
+#   SEO_API_BASE       = https://<api-host>/api
+#   SEO_FETCH_API      = 1
+#
+# @immo/shared-types is vendored under packages/ as a workspace package and
+# must be compiled before Vite bundles it (dist/ is gitignored).
+
+[build]
+  base = "."
+  command = "corepack enable && pnpm install --frozen-lockfile && pnpm --filter @immo/shared-types build && pnpm run build"
+  publish = "dist"
+
+[build.environment]
+  # Keep the toolchain in lockstep with package.json engines and .node-version.
+  NODE_VERSION = "20.18.1"
+  PNPM_VERSION = "12.5.1"
+  PNPM_FLAGS = "--frozen-lockfile"
+
+[dev]
+  command = "corepack enable && pnpm install --frozen-lockfile && pnpm --filter @immo/shared-types build && pnpm run dev"
+  targetPort = 5173
+  port = 5173
+  autoLaunch = false
+
+# ── Backend reverse proxy ────────────────────────────────────────────────
+# The app targets a same-origin /api, /uploads and /socket.io (see
+# src/lib/runtime.ts). Forwarding them to the API keeps CORS out of the
+# browser entirely and lets images and the realtime channel work unchanged.
+#
+# Leave VITE_API_BASE_URL unset while these rules are active. If you would
+# rather hit the API directly, delete these three blocks and set
+# VITE_API_BASE_URL + VITE_UPLOADS_BASE_URL instead.
+[[redirects]]
+  from = "/api/*"
+  to = "https://immo-burundi-server.onrender.com/api/:splat"
+  status = 200
+  force = true
+  [redirects.query]
+    pass = true
+
+[[redirects]]
+  from = "/uploads/*"
+  to = "https://immo-burundi-server.onrender.com/uploads/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/socket.io/*"
+  to = "https://immo-burundi-server.onrender.com/socket.io/:splat"
+  status = 200
+  force = true
+
+# ── SPA fallback ─────────────────────────────────────────────────────────
+# Real files (assets, the prerendered /immobilier/* and /property/* pages,
+# robots.txt, sitemap.xml) are served first, so this only catches client-side
+# routes. A splat rewrite keeps the URL in the address bar, which is what the
+# canonical/SEO layer expects.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# ── Caching ──────────────────────────────────────────────────────────────
+# Vite emits content-hashed filenames into /assets, so they are immutable.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/og-image.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# Generated at build time by scripts/seo-build.mjs — never cache at the CDN.
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# index.html is the SPA entry point: it must never be cached, or clients
+# keep booting an old bundle hash after a deploy.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Payload images are content-addressed by the browser cache; do not let a
+# CDN re-compress them into something the API cannot revalidate.
+[[headers]]
+  for = "/uploads/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# ── Security headers ────────────────────────────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(self), camera=(), microphone=()"
+    # Everything is same-origin, so 'self' covers the app and the Leaflet,
+    # Esri and Google Fonts assets. 'unsafe-inline' covers the inline theme
+    # bootstrap and the Google Identity Services script injected at runtime.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://accounts.google.com/gsi/client; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://images.unsplash.com https://res.cloudinary.com https://*.tile.openstreetmap.org https://server.arcgisonline.com https://basemaps.cartocdn.com; connect-src 'self' https://immo-burundi-server.onrender.com wss://immo-burundi-server.onrender.com https://*.tile.openstreetmap.org https://server.arcgisonline.com https://basemaps.cartocdn.com; frame-src https://accounts.google.com; object-src 'none'; base-uri 'self'; form-action 'self'"

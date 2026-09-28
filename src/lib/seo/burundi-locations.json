@@ -1,0 +1,98 @@
+{
+  "country": "Burundi",
+  "countryCode": "BI",
+  "provinces": [
+    {
+      "name": "Bujumbura Mairie",
+      "slug": "bujumbura-mairie",
+      "isCapital": true,
+      "blurb": "Capitale economique du Burundi, Bujumbura Mairie concentre les quartiers administratifs, les tours et les bureaux du centre-ville. Les prix y sont les plus eleves du pays, mais le marche est le plus liquide : on y trouve le plus large choix de villas, d'appartements et de commerces."
+    },
+    {
+      "name": "Bujumbura Rural",
+      "slug": "bujumbura-rural",
+      "blurb": "Bujumbura Rural est la ceinture periurbaine de la capitale. Le territoire est en forte croissance et attire les menages qui cherchent une maison avec jardin a un prix encore inferieur a celui de Bujumbura, tout en restant proche des emplois et des ecoles."
+    },
+    {
+      "name": "Bubanza",
+      "slug": "bubanza",
+      "blurb": "Bubanza est la porte d'entree nord-ouest de Bujumbura, dans une region vallonnee et agricole. Les properties rurales, les terrains cultivables et les residences de villégiature y trouvent preneur aupres des familles de la diaspora burundaise."
+    },
+    {
+      "name": "Bururi",
+      "slug": "bururi",
+      "blurb": "Province de l'Ouest, Bururi est reputee pour ses paysages de bruyere, le parc national de la Kibira et ses terres agricoles. Le marche y est surtout rural et touristique, avec quelques proprietes en hauteur autour de Bururi et Rutovu."
+    },
+    {
+      "name": "Cankuzo",
+      "slug": "cankuzo",
+      "blurb": "Cankuzo est une petite province rurale de l'Est, au relief accidenté. Les annonces concernent surtout des terrains agricoles et des lots d'habitation, avec des prix largement inferieurs a ceux de la capitale."
+    },
+    {
+      "name": "Cibitoke",
+      "slug": "cibitoke",
+      "blurb": "A l'Ouest, Cibitoke borde le lac Tanganyika et la Republique democratique du Congo. La province associe agriculture, peche et commerce frontalier : on y recherche des proprietes rurales, des terrains et des locaux commerciaux."
+    },
+    {
+      "name": "Gitega",
+      "slug": "gitega",
+      "isCapital": true,
+      "blurb": "Gitega est la capitale politique du Burundi et le deuxieme centre urbain du pays. La presence des administrations et des institutions y stimule la demande : maisons, terrains a batir et bureaux s'y trouvent a des prix nettement plus abordables qu'a Bujumbura."
+    },
+    {
+      "name": "Karuzi",
+      "slug": "karuzi",
+      "blurb": "Karuzi, dans les hauts plateaux du centre, est connue pour le lac Tanganyika et le barrage qui borde la ville. Le marche immobilier y est rural : terrains agricoles, Elevage et quelques residences de villégiature."
+    },
+    {
+      "name": "Kayanza",
+      "slug": "kayanza",
+      "blurb": "Kayanza est une province agricole fertile du Nord et un grand producteur de cafe. La demande porte sur des maisons familiales, des terrains a batir et des proprietes rurales a proximite de la ville de Kayanza."
+    },
+    {
+      "name": "Kirundo",
+      "slug": "kirundo",
+      "blurb": "Au Nord du pays, Kirundo est connue pour le lac Kirundo et la reserve naturelle de la Kibira. Les biens disponibles sont surtout des proprietes rurales, des terrains et des maisons de campagne."
+    },
+    {
+      "name": "Makamba",
+      "slug": "makamba",
+      "blurb": "Makamba est une province du centre, marquee par le lac Nyanza et la foret de Rwegura. Le territoire est peu urbanise et le marche y est essentiellement rural : champs, vergers et habitations a Nyanza-Lac."
+    },
+    {
+      "name": "Muramvya",
+      "slug": "muramvya",
+      "blurb": "Premier producteur de the du Burundi, Muramvya voit son economie faconnee par les plantations et les industries de Bukeye. Les proprietes se situent surtout autour de Muramvya, Bukeye et Kiganda."
+    },
+    {
+      "name": "Muyinga",
+      "slug": "muyinga",
+      "blurb": "Muyinga, capitale du Nord, est une region agricole en developpement. Le marche combine champs, terrains a batir et maisons familiales, avec une demande locale solvente et une diaspora en recherche de foncier."
+    },
+    {
+      "name": "Mwaro",
+      "slug": "mwaro",
+      "blurb": "Mwaro est la province du centre qui entoure la capitale, avec un relief vallonne et une longue tradition agricole. Proche de Bujumbura, elle attire les projets residentiels et les projets agro-touristiques."
+    },
+    {
+      "name": "Ngozi",
+      "slug": "ngozi",
+      "blurb": "Ngozi est une province du Nord tres peuplee et historiquement dynamique, grand centre de production de cafe. La demande est reelle pour les maisons familiales, les terrains a batir et les commerces, a des prix encore abordables."
+    },
+    {
+      "name": "Rumonge",
+      "slug": "rumonge",
+      "blurb": "Rumonge se situe au Sud-Ouest, entre le lac Tanganyika et la chaine du Bubembe. Son littoral attire les projets touristiques : proprietes en bord de lac et terrains a batir, notamment vers Burambi."
+    },
+    {
+      "name": "Rutana",
+      "slug": "rutana",
+      "blurb": "Rutana est une province du Sud marquee par le lac Tanganyika et ses etangs. Le marche y est rural : champs, paturages et habitations familiales, avec des prix tres accessibles."
+    },
+    {
+      "name": "Ruyigi",
+      "slug": "ruyigi",
+      "blurb": "Ruyigi est la plus petite province du Sud, a la population dispersee. Le marche immobilier y est tres rural : champs, paturages et habitations familiales, avec les prix les plus accessibles du Burundi."
+    }
+  ]
+}
