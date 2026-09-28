@@ -24,6 +24,16 @@
   # Keep the toolchain in lockstep with package.json engines and .node-version.
   NODE_VERSION = "20.18.1"
 
+  # Netlify's post-build secret scanner fails the deploy when the value of any
+  # env var set in the dashboard also appears in a repo file or in the build
+  # output. The vars below are PUBLIC origins, not credentials: VITE_* values
+  # are inlined into the client bundle by design and are readable by every
+  # visitor. They legitimately appear in netlify.toml, .env.example and the
+  # SEO config, so they are declared here to stop the scanner treating them as
+  # leaked secrets. Nothing genuinely confidential is listed — JWT secrets,
+  # Mongo URIs and the like stay in the Render service only.
+  SECRETS_SCAN_OMIT_KEYS = "VITE_SITE_URL,SEO_API_BASE,VITE_API_BASE_URL,VITE_UPLOADS_BASE_URL,VITE_API_PROXY_TARGET"
+
 [dev]
   command = "npm install --global pnpm@12.5.1 && pnpm install --frozen-lockfile && pnpm --filter @immo/shared-types build && pnpm run dev"
   targetPort = 5173
