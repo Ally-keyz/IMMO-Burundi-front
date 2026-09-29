@@ -11,10 +11,13 @@
 
 [build]
   base = "."
-  # pnpm is installed with npm rather than `corepack enable` so the build does
-  # not depend on corepack at all. The pinned 10.x line also guarantees the
-  # version matches the `packageManager` field, which pnpm enforces by default.
-  command = "npm install --global pnpm@10.34.6 && pnpm install --frozen-lockfile && pnpm --filter @immo/shared-types build && pnpm run build"
+  # pnpm comes from corepack, never from `npm install --global pnpm`. Netlify's
+  # pre-build install stage already runs `corepack enable`, which writes a pnpm
+  # shim into the Node bin dir; a global npm install then aborts the whole build
+  # with "npm error EEXIST: file already exists ... /bin/pnpm" (exit code 2).
+  # `corepack enable` is idempotent and picks the version from the
+  # `packageManager` field, so this stays a no-op when the shim is already there.
+  command = "corepack enable && pnpm install --frozen-lockfile && pnpm --filter @immo/shared-types build && pnpm run build"
   publish = "dist"
 
 [build.environment]
@@ -41,6 +44,9 @@
   #    "Cannot find module .../bin/pnpm.cjs". pnpm 10 still ships
   #    `bin/pnpm.cjs`, which is why the project is pinned to the 10.x line.
   #    pnpm 12 also requires Node 22.13+ even to install via npm.
+  #
+  # `npm install --global pnpm` is NOT a valid fallback: that install stage has
+  # already left a corepack shim at the same path, so npm aborts with EEXIST.
   COREPACK_INTEGRITY_KEYS = "0"
   PNPM_VERSION = "10.34.6"
 
@@ -55,7 +61,7 @@
   SECRETS_SCAN_OMIT_KEYS = "VITE_SITE_URL,SEO_API_BASE,VITE_API_BASE_URL,VITE_UPLOADS_BASE_URL,VITE_API_PROXY_TARGET"
 
 [dev]
-  command = "npm install --global pnpm@10.34.6 && pnpm install --frozen-lockfile && pnpm --filter @immo/shared-types build && pnpm run dev"
+  command = "corepack enable && pnpm install --frozen-lockfile && pnpm --filter @immo/shared-types build && pnpm run dev"
   targetPort = 5173
   port = 5173
   autoLaunch = false
