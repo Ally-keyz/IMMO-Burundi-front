@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Bell,
@@ -21,6 +21,7 @@ import LanguageDropdown from './LanguageDropdown';
 import CurrencyDropdown from './CurrencyDropdown';
 import ThemeToggle from './ThemeToggle';
 import SearchModal from '../SearchModal';
+import Popover from '../Popover';
 import { isAgentRole } from '../../lib/roles';
 import ProfileAvatar from '../ProfileAvatar';
 
@@ -34,6 +35,8 @@ export default function Header(): JSX.Element {
 
   const [avatarOpen, setAvatarOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const avatarRef = useRef<HTMLDivElement>(null);
+  const avatarPanelRef = useRef<HTMLDivElement>(null);
 
   const go = (path: string) => {
     setAvatarOpen(false);
@@ -128,7 +131,7 @@ export default function Header(): JSX.Element {
 
         {/* Avatar / auth */}
         {isAuthenticated && user ? (
-          <div className="relative shrink-0">
+          <div ref={avatarRef} className="relative shrink-0">
             <button
               type="button"
               onClick={() => setAvatarOpen((v) => !v)}
@@ -139,49 +142,52 @@ export default function Header(): JSX.Element {
               <ProfileAvatar user={user} alt="" />
               <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${avatarOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
             </button>
-            {avatarOpen ? (
-              <div className="absolute right-0 top-full z-50 mt-2 w-72 rounded-xl border border-gray-200 bg-surface p-2 shadow-pop">
-                <div className="flex items-center gap-3 rounded-lg px-3 py-2">
-                  <ProfileAvatar user={user} sizeClass="h-10 w-10" textClass="text-sm" alt="" />
-                  <div className="min-w-0">
-                    <p className="truncate text-base font-semibold text-gray-900">
-                      {user.firstName} {user.lastName}
-                    </p>
-                    <p className="truncate text-sm text-gray-500">{user.email || user.phone}</p>
-                  </div>
-                </div>
-                <div className="mt-1 border-t border-gray-100 py-1">
-                  {[
-                    ...(isAgentRole(user.role)
-                      ? [{ labelKey: 'dashboard.myProperties', to: '/dashboard?tab=myProperties', icon: <Building2 className="h-4 w-4" /> }]
-                      : []),
-                    { labelKey: 'dashboard.favorites', to: '/dashboard?tab=favorites', icon: <Heart className="h-4 w-4" /> },
-                    { labelKey: 'dashboard.notifications', to: '/dashboard?tab=notifications', icon: <Bell className="h-4 w-4" /> },
-                    { labelKey: 'dashboard.settings', to: '/settings', icon: <Settings className="h-4 w-4" /> },
-                  ].map((l) => (
-                    <button
-                      key={l.labelKey}
-                      type="button"
-                      onClick={() => go(l.to)}
-                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-base text-gray-700 transition-colors hover:bg-gray-50"
-                    >
-                      {l.icon}
-                      {t(l.labelKey)}
-                    </button>
-                  ))}
-                </div>
-                <div className="border-t border-gray-100 pt-1">
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-base text-notVerified transition-colors hover:bg-notVerified/5"
-                  >
-                    <LogOut className="h-4 w-4" aria-hidden="true" />
-                    {t('auth.logout')}
-                  </button>
+            <Popover
+              open={avatarOpen}
+              anchor={avatarRef}
+              panelRef={avatarPanelRef}
+              className="w-72 rounded-xl border border-gray-200 bg-surface p-2 shadow-pop"
+            >
+              <div className="flex items-center gap-3 rounded-lg px-3 py-2">
+                <ProfileAvatar user={user} sizeClass="h-10 w-10" textClass="text-sm" alt="" />
+                <div className="min-w-0">
+                  <p className="truncate text-base font-semibold text-gray-900">
+                    {user.firstName} {user.lastName}
+                  </p>
+                  <p className="truncate text-sm text-gray-500">{user.email || user.phone}</p>
                 </div>
               </div>
-            ) : null}
+              <div className="mt-1 border-t border-gray-100 py-1">
+                {[
+                  ...(isAgentRole(user.role)
+                    ? [{ labelKey: 'dashboard.myProperties', to: '/dashboard?tab=myProperties', icon: <Building2 className="h-4 w-4" /> }]
+                    : []),
+                  { labelKey: 'dashboard.favorites', to: '/dashboard?tab=favorites', icon: <Heart className="h-4 w-4" /> },
+                  { labelKey: 'dashboard.notifications', to: '/dashboard?tab=notifications', icon: <Bell className="h-4 w-4" /> },
+                  { labelKey: 'dashboard.settings', to: '/settings', icon: <Settings className="h-4 w-4" /> },
+                ].map((l) => (
+                  <button
+                    key={l.labelKey}
+                    type="button"
+                    onClick={() => go(l.to)}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-base text-gray-700 transition-colors hover:bg-gray-50"
+                  >
+                    {l.icon}
+                    {t(l.labelKey)}
+                  </button>
+                ))}
+              </div>
+              <div className="border-t border-gray-100 pt-1">
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-base text-notVerified transition-colors hover:bg-notVerified/5"
+                >
+                  <LogOut className="h-4 w-4" aria-hidden="true" />
+                  {t('auth.logout')}
+                </button>
+              </div>
+            </Popover>
           </div>
         ) : (
           <div className="flex shrink-0 items-center gap-2">
