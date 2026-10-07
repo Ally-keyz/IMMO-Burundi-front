@@ -81,7 +81,7 @@ export default function PropertyCard({ property, onFavoriteChange, favorite: fav
       aria-label={property.title}
     >
       {/* ── Cover image ─────────────────────────────────────── */}
-      <div className="relative aspect-[6/5] overflow-hidden rounded-tile bg-gray-100">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-gray-100">
         {imageUrl && !imgFailed ? (
           <img
             src={imageUrl}
