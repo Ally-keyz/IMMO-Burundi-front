@@ -190,14 +190,14 @@ export default function AgentChannelPage(): JSX.Element {
           icon={<Building2 className="h-10 w-10" />}
         />
       ) : properties.loading ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 desktop:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 desktop:grid-cols-3">
           <PropertyCardSkeleton count={Math.min(pageSize, 8)} />
         </div>
       ) : properties.error ? (
         <ErrorState title={t('error.loadFailed')} message={properties.error} onRetry={properties.reload} />
       ) : listings.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 desktop:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 desktop:grid-cols-3">
             {listings.map((p) => (
               <PropertyCard key={p._id} property={p} />
             ))}

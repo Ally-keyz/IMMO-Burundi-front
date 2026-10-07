@@ -349,19 +349,18 @@
   display: none;
 }
 
-/* Hero card fills 70% of the visible screen, so the listings below start
-   above the fold on a laptop instead of being pushed off it.
-   dvh covers mobile browser chrome; fall back to vh where dvh is
+/* Hero card is a compact banner: only the welcome label + headline sit on
+   the video now, so it stays short and the listings below start well above
+   the fold. dvh covers mobile browser chrome; fall back to vh where dvh is
    unsupported. min-height (not height) so a short viewport still grows the
-   card instead of clipping the headline/toolbar/stats, which overflow-hidden
-   would cut. */
+   card instead of clipping the headline, which overflow-hidden would cut. */
 .hero-height {
-  min-height: 70vh;
+  min-height: 44vh;
 }
 
 @supports (height: 1dvh) {
   .hero-height {
-    min-height: 70dvh;
+    min-height: 44dvh;
   }
 }
 

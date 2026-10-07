@@ -12,7 +12,7 @@ import PropertyCardSkeleton from '../PropertyCardSkeleton';
 import EmptyState from '../EmptyState';
 import ErrorState from '../ErrorState';
 
-const GRID = 'grid grid-cols-1 gap-6 md:grid-cols-2 desktop:grid-cols-4';
+const GRID = 'grid grid-cols-1 gap-6 md:grid-cols-2 desktop:grid-cols-3';
 
 interface CategoryListingPageProps {
   eyebrow: string;

@@ -32,7 +32,7 @@ import { formatNumber } from '../lib/format';
 
 import { MEDIA_PLACEHOLDER_COLORS } from '../lib/constants';
 
-const GRID = 'grid grid-cols-1 gap-6 md:grid-cols-2 desktop:grid-cols-4';
+const GRID = 'grid grid-cols-1 gap-6 md:grid-cols-2 desktop:grid-cols-3';
 
 function primaryImage(p: PropertySummaryDTO): string {
   const primary = p.media?.find((m) => m.isPrimary) ?? p.media?.[0];
@@ -148,8 +148,8 @@ export default function HomePage(): JSX.Element {
       />
       <span className="sr-only">{t('home.tagline')}</span>
 
-      {/* ── Hero: image card with headline + existing search/filter ── */}
-      <HeroSection onFilterClick={() => setAdvancedOpen(true)} />
+      {/* ── Hero: video card with headline ── */}
+      <HeroSection />
 
       {/* ── Category tiles (32px below the hero) ── */}
       <section className="container-page mt-8" aria-label={t('tiles.explore')}>

@@ -1,13 +1,7 @@
 import { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Star } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { propertiesApi } from '../../lib/api';
-import { useAsyncData } from '../../lib/useAsyncData';
-import { formatNumber } from '../../lib/format';
-import { markSearchPerformed } from '../../lib/search';
-import ExploreToolbar from './ExploreToolbar';
 
 const HERO_IMAGE_URL =
   'https://images.unsplash.com/photo-1757356657991-c3fd6e2e812e?w=2400&q=80&auto=format&fit=crop';
@@ -22,42 +16,13 @@ const AGENT_AVATARS = [
   'https://randomuser.me/api/portraits/men/75.jpg',
 ];
 
-interface HeroSectionProps {
-  onFilterClick?: () => void;
-}
-
-export default function HeroSection({ onFilterClick }: HeroSectionProps): JSX.Element {
+export default function HeroSection(): JSX.Element {
   const { t } = useLanguage();
-  const navigate = useNavigate();
 
   const cardRef = useRef<HTMLDivElement | null>(null);
   const { scrollYProgress } = useScroll({ target: cardRef, offset: ['start start', 'end start'] });
   const contentOpacity = useTransform(scrollYProgress, [0, 0.9], [1, 0]);
   const contentY = useTransform(scrollYProgress, [0, 0.9], [0, -36]);
-
-  const stats = useAsyncData(async () => {
-    const [all, verified] = await Promise.all([
-      propertiesApi.search({ page: 1, pageSize: 1 }),
-      propertiesApi.search({ page: 1, pageSize: 1, verificationStatus: 'VERIFIED' }),
-    ]);
-    let provinces = 0;
-    try {
-      provinces = (await propertiesApi.getPopularLocations(12)).length;
-    } catch {
-      provinces = 0;
-    }
-    return {
-      listings: all.meta.total,
-      verified: verified.meta.total,
-      provinces,
-    };
-  }, []);
-
-  const statsList = [
-    { value: stats.data ? formatNumber(stats.data.listings) : '—', label: t('hero.statsListings') },
-    { value: stats.data ? formatNumber(stats.data.provinces) : '—', label: t('hero.statsProvinces') },
-    { value: stats.data ? formatNumber(stats.data.verified) : '—', label: t('hero.statsVerified') },
-  ];
 
   return (
     <section className="container-page pt-5 desktop:pt-[38px]">
@@ -68,7 +33,7 @@ export default function HeroSection({ onFilterClick }: HeroSectionProps): JSX.El
           muted
           loop
           playsInline
-          preload="auto"
+          preload="metadata"
           poster={HERO_IMAGE_URL}
           controlsList="nodownload"
           disablePictureInPicture
@@ -87,17 +52,17 @@ export default function HeroSection({ onFilterClick }: HeroSectionProps): JSX.El
         />
 
         <motion.div
-          className="relative z-10 flex flex-1 flex-col justify-between gap-6 p-6 pb-[5.5rem] sm:p-10 sm:pb-24 md:pb-[7.5rem] desktop:gap-8 desktop:pb-10 desktop:pl-[120px] desktop:pr-16 desktop:pt-9"
+          className="relative z-10 flex flex-1 flex-col justify-center gap-6 p-6 pb-[5.5rem] sm:p-10 sm:pb-24 md:pb-[7.5rem] desktop:gap-8 desktop:pb-10 desktop:pl-[120px] desktop:pr-16 desktop:pt-9"
           style={{ opacity: contentOpacity, y: contentY }}
         >
-          {/* Headline + description */}
+          {/* Headline */}
           <div className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/85 md:text-base">
               {t('hero.welcome')}
             </p>
             <motion.h1
               className="mt-4 font-extrabold uppercase leading-[0.93] tracking-tight text-white"
-              style={{ fontSize: 'clamp(2.5rem, 7.8vw, 7.75rem)' }}
+              style={{ fontSize: 'clamp(2rem, 5.5vw, 5rem)' }}
               initial="hidden"
               animate="visible"
               variants={{ visible: { transition: { staggerChildren: 0.12, delayChildren: 0.3 } } }}
@@ -130,37 +95,6 @@ export default function HeroSection({ onFilterClick }: HeroSectionProps): JSX.El
                 {t('hero.line3')}
               </motion.span>
             </motion.h1>
-            <p className="mt-6 max-w-[780px] text-lg leading-[1.5] text-white/90 md:text-2xl desktop:text-[26px]">
-              {t('hero.desc')}
-            </p>
-          </div>
-
-          {/* Search + filter (reuses the existing toolbar) */}
-          <div className="max-w-3xl">
-            <ExploreToolbar
-              hero
-              onSearch={(q) => {
-                markSearchPerformed();
-                navigate(`/search?${new URLSearchParams(q ? { q } : {}).toString()}`);
-              }}
-              onFilterClick={onFilterClick}
-            />
-          </div>
-
-          {/* Stats (kept clear of the notch) */}
-          <div className="desktop:pr-[640px]">
-            <dl className="flex flex-wrap gap-10 md:gap-14">
-              {statsList.map((s) => (
-                <div key={s.label}>
-                  <dt className="text-5xl font-extralight leading-none tabular-nums text-white sm:text-6xl desktop:text-[70px]">
-                    {s.value}
-                  </dt>
-                  <dd className="mt-2 text-sm font-semibold uppercase tracking-wide text-white/75 md:text-base">
-                    {s.label}
-                  </dd>
-                </div>
-              ))}
-            </dl>
           </div>
         </motion.div>
 

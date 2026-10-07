@@ -1,0 +1,21 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": ["bi.immoburundi.immoburundi"],
+        "components": [
+          { "/": "/property/*", "comment": "A single property" },
+          { "/": "/agent/*", "comment": "A single agent" },
+          { "/": "/pay/*", "comment": "A payment link, from an agreement" },
+          { "/": "/auth/setup/*", "comment": "Account setup from an emailed token" },
+          { "/": "/category/*", "comment": "A listing category" },
+          { "/": "/home/search", "comment": "A search, incl. the legacy /immobilier/ form" }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["bi.immoburundi.immoburundi"]
+  }
+}

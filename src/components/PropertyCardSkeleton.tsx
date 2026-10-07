@@ -8,7 +8,7 @@ export default function PropertyCardSkeleton({ count = 1 }: PropertyCardSkeleton
     <>
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="animate-pulse">
-          <div className="aspect-[438/342] rounded-tile bg-gray-200" />
+          <div className="aspect-[6/5] rounded-tile bg-gray-200" />
           <div className="mt-2 flex h-[50px] items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="h-[30px] w-[30px] rounded-full bg-gray-200" />

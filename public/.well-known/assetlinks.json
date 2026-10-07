@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "bi.immoburundi.immoburundi",
+      "sha256_cert_fingerprints": [
+        "BA03A43B17EBF066C96AEB47174A52E3E7207E0FC5C969B11518AF5179517473"
+      ]
+    }
+  }
+]

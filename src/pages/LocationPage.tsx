@@ -139,13 +139,13 @@ export default function LocationPage(): JSX.Element {
         </p>
 
         {listings.loading ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 desktop:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 desktop:grid-cols-3">
             <PropertyCardSkeleton count={8} />
           </div>
         ) : listings.error ? (
           <ErrorState title={t('error.loadFailed')} message={listings.error} onRetry={listings.reload} />
         ) : items.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 desktop:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 desktop:grid-cols-3">
             {items.map((p) => (
               <PropertyCard key={p._id} property={p} />
             ))}

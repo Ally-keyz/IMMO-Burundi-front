@@ -403,13 +403,13 @@ export default function SearchPage(): JSX.Element {
           {/* Results */}
           <div className="mt-6">
             {results.loading ? (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 desktop:grid-cols-4">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 desktop:grid-cols-3">
                 <PropertyCardSkeleton count={6} />
               </div>
             ) : results.error ? (
               <ErrorState title={t('error.generic')} message={results.error} onRetry={results.reload} retryLabel={t('error.retry')} />
             ) : results.data && results.data.items.length > 0 ? (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 desktop:grid-cols-4">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 desktop:grid-cols-3">
                 {results.data.items.map((p) => (
                   <PropertyCard key={p._id} property={p} />
                 ))}
