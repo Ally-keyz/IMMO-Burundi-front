@@ -7,7 +7,7 @@ const HERO_IMAGE_URL =
   'https://images.unsplash.com/photo-1757356657991-c3fd6e2e812e?w=2400&q=80&auto=format&fit=crop';
 
 const HERO_VIDEO_URL =
-  '/assets/videos/vid.mp4';
+  '/assets/videos/vid-v2.mp4';
 
 const AGENT_AVATARS = [
   'https://randomuser.me/api/portraits/women/44.jpg',
