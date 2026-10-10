@@ -355,12 +355,12 @@
    unsupported. min-height (not height) so a short viewport still grows the
    card instead of clipping the headline, which overflow-hidden would cut. */
 .hero-height {
-  min-height: 44vh;
+  min-height: 52vh;
 }
 
 @supports (height: 1dvh) {
   .hero-height {
-    min-height: 44dvh;
+    min-height: 52dvh;
   }
 }
 
