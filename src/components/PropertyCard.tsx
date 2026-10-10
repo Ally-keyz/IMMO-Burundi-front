@@ -99,11 +99,11 @@ export default function PropertyCard({ property, onFavoriteChange, favorite: fav
         {/* Hover dim */}
         <div className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/10" aria-hidden="true" />
 
-        {/* Single verified badge — yellow icon, bottom-left of the image */}
+        {/* Single verified badge — blue icon, bottom-left of the image */}
         {property.verification?.status === 'VERIFIED' || property.verification?.status === 'FULLY_VERIFIED' ? (
           <span
             title={t('property.verified')}
-            className="absolute bottom-3 left-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-[#F5B400] shadow-soft"
+            className="absolute bottom-3 left-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-brand-600 shadow-soft"
           >
             <BadgeCheck className="h-[18px] w-[18px] text-white" aria-hidden="true" />
           </span>

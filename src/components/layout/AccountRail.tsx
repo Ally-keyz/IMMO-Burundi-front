@@ -171,7 +171,7 @@ export default function AccountRail({ overlay = false }: { overlay?: boolean }):
     return (
       <aside
         aria-label={t('dashboard.title')}
-        className={`${overlay ? 'fixed left-0 top-16 z-30 shadow-pop' : 'sticky top-16'} hidden h-[calc(100vh-64px)] w-[76px] shrink-0 flex-col self-start overflow-y-auto bg-bg px-2 py-3 lg:flex`}
+        className={`${overlay ? 'fixed left-0 top-16 z-30' : 'sticky top-16'} hidden h-[calc(100vh-64px)] w-[76px] shrink-0 flex-col self-start overflow-y-auto bg-transparent px-2 py-3 lg:flex`}
       >
         {/* Profile */}
         <button type="button" onClick={() => navigate('/settings')} className="mb-3 flex h-12 w-full items-center justify-center" aria-label={t('dashboard.sidebar.profile')}>

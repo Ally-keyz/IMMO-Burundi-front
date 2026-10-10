@@ -310,7 +310,7 @@ function SectionHeadingInline({
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h2 className="text-h2 font-bold text-gray-900">{title}</h2>
+        <h2 className="text-3xl font-bold text-gray-900">{title}</h2>
         {desc ? <p className="mt-1 text-meta text-gray-500">{desc}</p> : null}
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}

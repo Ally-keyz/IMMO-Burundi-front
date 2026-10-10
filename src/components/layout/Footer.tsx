@@ -60,7 +60,7 @@ export default function Footer(): JSX.Element {
   ];
 
   return (
-    <footer className="border-t border-black/5 bg-accent text-ink">
+    <footer className="border-t border-white/10 bg-ink text-white">
       <div className="container-page py-12">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-6">
           {/* Brand */}
@@ -68,7 +68,7 @@ export default function Footer(): JSX.Element {
             <Link to="/" className="inline-flex items-center gap-2">
               <img src="/assets/brand/logo-crop.png" alt="IMMO BURUNDI" className="h-9 w-auto" />
             </Link>
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink/70">{t('footer.description')}</p>
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-white/70">{t('footer.description')}</p>
             <div className="mt-4 flex items-center gap-2">
               {SOCIAL_LINKS.map((link) => (
                 <a
@@ -76,7 +76,7 @@ export default function Footer(): JSX.Element {
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-9 w-9 items-center justify-center rounded-full text-ink/70 transition-colors hover:bg-surface/40 hover:text-ink"
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white"
                   aria-label={t(link.labelKey)}
                 >
                   {link.labelKey.includes('facebook') ? <Facebook className="h-4 w-4" /> : null}
@@ -90,12 +90,12 @@ export default function Footer(): JSX.Element {
 
           {columns.map((col) => (
             <div key={col.title}>
-              <h3 className="text-sm font-semibold text-ink">{col.title}</h3>
+              <h3 className="text-sm font-semibold text-white">{col.title}</h3>
               <ul className="mt-3 space-y-2">
                 {col.links.map((link) => (
                   <li key={link.labelKey}>
                     {link.to ? (
-                      <Link to={link.to} className="text-sm text-ink/70 transition-colors hover:text-ink">
+                      <Link to={link.to} className="text-sm text-white/70 transition-colors hover:text-white">
                         {t(link.labelKey)}
                       </Link>
                     ) : (
@@ -103,7 +103,7 @@ export default function Footer(): JSX.Element {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-ink/70 transition-colors hover:text-ink"
+                        className="text-sm text-white/70 transition-colors hover:text-white"
                       >
                         {t(link.labelKey)}
                       </a>
@@ -116,11 +116,11 @@ export default function Footer(): JSX.Element {
 
           {/* Languages */}
           <div>
-            <h3 className="text-sm font-semibold text-ink">{t('common.language')}</h3>
+            <h3 className="text-sm font-semibold text-white">{t('common.language')}</h3>
             <ul className="mt-3 space-y-2">
               {(['fr', 'en', 'sw'] as const).map((lang) => (
                 <li key={lang}>
-                  <button type="button" onClick={() => setLanguage(lang)} className="text-sm text-ink/70 transition-colors hover:text-ink">
+                  <button type="button" onClick={() => setLanguage(lang)} className="text-sm text-white/70 transition-colors hover:text-white">
                     {lang === 'fr' ? 'Français' : lang === 'en' ? 'English' : 'Swahili'}
                   </button>
                 </li>
@@ -129,7 +129,7 @@ export default function Footer(): JSX.Element {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-black/5 pt-6 text-xs text-ink/60 sm:flex-row">
+        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-white/10 pt-6 text-xs text-white/60 sm:flex-row">
           <p>
             © {new Date().getFullYear()} IMMO BURUNDI — {t('footer.tagline')}
           </p>
