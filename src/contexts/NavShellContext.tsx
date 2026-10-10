@@ -1,9 +1,9 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 
 interface NavShellState {
-  /** Sidebar collapsed to an icon-only rail (default true = collapsed). */
-  railCollapsed: boolean;
-  setRailCollapsed: (v: boolean) => void;
+  /** Account sidebar drawer — hidden until the menu button opens it. */
+  railOpen: boolean;
+  setRailOpen: (v: boolean) => void;
   toggleRail: () => void;
   /** Temporary nav drawer (used by logged-out visitors & mobile). */
   drawerOpen: boolean;
@@ -13,14 +13,14 @@ interface NavShellState {
 const NavShellContext = createContext<NavShellState | null>(null);
 
 export function NavShellProvider({ children }: { children: ReactNode }): JSX.Element {
-  const [railCollapsed, setRailCollapsed] = useState(true);
+  const [railOpen, setRailOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const toggleRail = useCallback(() => setRailCollapsed((v) => !v), []);
+  const toggleRail = useCallback(() => setRailOpen((v) => !v), []);
 
   const value = useMemo(
-    () => ({ railCollapsed, setRailCollapsed, toggleRail, drawerOpen, setDrawerOpen }),
-    [railCollapsed, toggleRail, drawerOpen],
+    () => ({ railOpen, setRailOpen, toggleRail, drawerOpen, setDrawerOpen }),
+    [railOpen, toggleRail, drawerOpen],
   );
 
   return <NavShellContext.Provider value={value}>{children}</NavShellContext.Provider>;

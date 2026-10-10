@@ -14,6 +14,7 @@ import {
   Settings,
   ShieldCheck,
   Users,
+  X,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -32,10 +33,10 @@ interface RailItem {
   expand?: boolean;
 }
 
-export default function AccountRail({ overlay = false }: { overlay?: boolean }): JSX.Element | null {
+export default function AccountRail(): JSX.Element | null {
   const { t } = useLanguage();
   const { user, isAuthenticated, logout } = useAuth();
-  const { railCollapsed, setRailCollapsed } = useNavShell();
+  const { railOpen, setRailOpen } = useNavShell();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
@@ -44,7 +45,6 @@ export default function AccountRail({ overlay = false }: { overlay?: boolean }):
   const isMainAdmin = isMainAdminRole(user?.role);
   const counts = useRailCounts(isMainAdmin ? 'ADMIN' : isAgent ? 'AGENT' : 'CUSTOMER');
   const [mPropsOpen, setMPropsOpen] = useState(false);
-  const [collapsedHover, setCollapsedHover] = useState(false);
 
   const siteHomeItem: RailItem = { id: 'siteHome', label: t('nav.home'), icon: <Home className="h-6 w-6" aria-hidden="true" /> };
 
@@ -104,16 +104,16 @@ export default function AccountRail({ overlay = false }: { overlay?: boolean }):
       : ''
     : requestedTab || (isDashboardActive ? defaultTabForRole(isAgent) : '');
 
-  if (!isAuthenticated) return null;
+  if (!isAuthenticated || !railOpen) return null;
 
   const openTab = (id: string, status?: string) => {
-    setCollapsedHover(false);
+    setRailOpen(false);
     navigate(status ? `/dashboard?tab=${id}&status=${status}` : `/dashboard?tab=${id}`);
   };
 
   const handleItem = (item: RailItem) => {
+    setRailOpen(false);
     if (item.id === 'siteHome') {
-      setCollapsedHover(false);
       navigate('/');
       return;
     }
@@ -131,12 +131,7 @@ export default function AccountRail({ overlay = false }: { overlay?: boolean }):
       return;
     }
     if (item.expand) {
-      if (railCollapsed) {
-        /* collapsed rail: clicking the rail icon first expands, then shows nested */
-        setRailCollapsed(false);
-      } else {
-        setMPropsOpen((v) => !v);
-      }
+      setMPropsOpen((v) => !v);
       return;
     }
     openTab(item.id);
@@ -166,180 +161,115 @@ export default function AccountRail({ overlay = false }: { overlay?: boolean }):
   const navActive = (id: string) =>
     id === 'siteHome' ? location.pathname === '/' : activeTab === id || (id === 'home' && isDashboardActive && !activeTab);
 
-  /* Collapsed icon rail (desktop) */
-  if (railCollapsed) {
-    return (
+  /* Off-canvas drawer: hidden until the menu button opens it, then overlays the page. */
+  return (
+    <>
+      <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setRailOpen(false)} aria-hidden="true" />
       <aside
         aria-label={t('dashboard.title')}
-        className={`${overlay ? 'fixed left-0 top-16 z-30' : 'sticky top-16'} hidden h-[calc(100vh-64px)] w-[76px] shrink-0 flex-col self-start overflow-y-auto bg-transparent px-2 py-3 lg:flex`}
+        className="fixed left-0 top-0 z-50 flex h-full w-[280px] max-w-[85vw] flex-col overflow-y-auto bg-bg px-3 py-4 shadow-pop"
       >
-        {/* Profile */}
-        <button type="button" onClick={() => navigate('/settings')} className="mb-3 flex h-12 w-full items-center justify-center" aria-label={t('dashboard.sidebar.profile')}>
+        <div className="mb-3 flex items-center justify-between">
+          <span className="px-2 text-sm font-bold uppercase tracking-wide text-gray-500">{t('nav.menu')}</span>
+          <button
+            type="button"
+            onClick={() => setRailOpen(false)}
+            aria-label={t('navigation.close')}
+            className="flex h-9 w-9 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100"
+          >
+            <X className="h-5 w-5" aria-hidden="true" />
+          </button>
+        </div>
+
+        {/* Profile block */}
+        <button
+          type="button"
+          onClick={() => {
+            setRailOpen(false);
+            navigate('/settings');
+          }}
+          className="mb-4 flex w-full items-center gap-3 rounded-xl p-1.5 text-left transition-colors hover:bg-gray-50"
+        >
           <ProfileAvatar user={user} sizeClass="h-10 w-10" textClass="text-sm" alt="" />
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-[13px] font-semibold text-gray-900">
+              {user?.firstName} {user?.lastName}
+            </span>
+            <span className="block truncate text-xs text-gray-500">{t('dashboard.sidebar.profile')}</span>
+          </span>
         </button>
 
-        <div className="flex flex-col gap-1">
+        <nav className="flex flex-1 flex-col gap-1">
           {roleItems.map((item) =>
             item.expand ? (
-              <div key={item.id} className="relative" onMouseEnter={() => setCollapsedHover(true)} onMouseLeave={() => setCollapsedHover(false)}>
+              <div key={item.id}>
                 <button
                   type="button"
                   onClick={() => handleItem(item)}
-                  title={item.label}
-                  aria-label={item.label}
                   aria-current={activeTab === item.id ? 'page' : undefined}
-                  className={`flex h-12 w-full items-center justify-center rounded-xl transition-colors ${
-                    mPropsActive ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
+                  className={`${itemClass(mPropsActive)} ${mPropsActive ? 'font-semibold' : ''}`}
                 >
                   {item.icon}
+                  <span className="min-w-0 flex-1 truncate text-[13px]">{item.label}</span>
+                  {item.badge && item.badge > 0 ? (
+                    <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-notVerified px-1 text-[10px] font-bold text-white">{item.badge > 9 ? '9+' : item.badge}</span>
+                  ) : null}
+                  <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${mPropsOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
                 </button>
-                {collapsedHover ? (
-                  <div className="absolute left-full top-0 z-30 ml-2 w-48 rounded-xl border border-gray-200 bg-surface p-1.5 shadow-pop">
+                {/* Nested sub-links: expandable status filter */}
+                <div className={`overflow-hidden transition-all ${mPropsOpen ? 'mt-1 max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                  <div className="ml-6 flex flex-col border-l border-gray-200 py-1">
                     {mPropsSubLinks.map((s) => (
-                      <button key={s.status} type="button" onClick={() => openTab('myProperties', s.status)} className="flex h-9 w-full items-center rounded-lg px-3 text-[13px] font-medium text-gray-700 hover:bg-gray-50">
+                      <button
+                        key={s.status || 'all'}
+                        type="button"
+                        onClick={() => openTab('myProperties', s.status)}
+                        aria-current={(searchParams.get('status') ?? '') === s.status && activeTab === 'myProperties' ? 'page' : undefined}
+                        className={`rounded-lg px-3 py-2 text-left text-[13px] transition-colors ${
+                          (searchParams.get('status') ?? '') === s.status && activeTab === 'myProperties'
+                            ? 'bg-gray-100 font-semibold text-gray-900'
+                            : 'text-gray-600 hover:bg-gray-50'
+                        }`}
+                      >
                         {s.label}
                       </button>
                     ))}
                   </div>
-                ) : null}
+                </div>
               </div>
             ) : (
               <button
                 key={item.id}
                 type="button"
                 onClick={() => handleItem(item)}
-                title={item.label}
                 aria-label={item.label}
-aria-current={navActive(item.id) ? 'page' : undefined}
-                  className={`relative flex h-12 w-full items-center justify-center rounded-xl transition-colors ${
-                    navActive(item.id) ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
-              >
-                {item.icon}
-                {item.badge && item.badge > 0 ? (
-                  <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-notVerified px-1 text-[10px] font-bold text-white">{item.badge > 9 ? '9+' : item.badge}</span>
-                ) : null}
-              </button>
-            ),
-          )}
-        </div>
-
-        <div className="mt-auto flex flex-col gap-1 border-t border-gray-100 pt-2">
-          {footerItems.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => handleItem(item)}
-              title={item.label}
-              aria-label={item.label}
-              className="flex h-12 w-full items-center justify-center rounded-xl text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
-            >
-              {item.icon}
-            </button>
-          ))}
-        </div>
-      </aside>
-    );
-  }
-
-  /* Expanded labeled sidebar (desktop) + horizontal strip (mobile) */
-  return (
-    <aside
-      aria-label={t('dashboard.title')}
-      className={`w-full bg-bg lg:flex lg:h-[calc(100vh-64px)] lg:w-[252px] lg:shrink-0 lg:flex-col lg:overflow-y-auto lg:px-3 lg:py-4 ${
-        overlay ? 'lg:fixed lg:left-0 lg:top-16 lg:z-30 lg:shadow-pop' : 'lg:sticky lg:top-16 lg:self-start'
-      }`}
-    >
-      {/* Profile block (expanded only) */}
-      <button
-        type="button"
-        onClick={() => navigate('/settings')}
-        className="mb-4 hidden w-full items-center gap-3 rounded-xl p-1.5 text-left transition-colors lg:flex hover:bg-gray-50"
-      >
-        <ProfileAvatar user={user} sizeClass="h-10 w-10" textClass="text-sm" alt="" />
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-[13px] font-semibold text-gray-900">
-            {user?.firstName} {user?.lastName}
-          </span>
-          <span className="block truncate text-xs text-gray-500">{t('dashboard.sidebar.profile')}</span>
-        </span>
-      </button>
-
-      <nav className="scrollbar-hide flex gap-1 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
-        {roleItems.map((item) =>
-          item.expand ? (
-            <div key={item.id} className="hidden lg:block">
-              <button
-                type="button"
-                onClick={() => handleItem(item)}
-                aria-current={activeTab === item.id ? 'page' : undefined}
-                className={`${itemClass(mPropsActive)} ${mPropsActive ? 'font-semibold' : ''}`}
+                aria-current={navActive(item.id) ? 'page' : undefined}
+                className={`relative w-full justify-start ${itemClass(navActive(item.id))} ${navActive(item.id) ? 'font-semibold' : ''}`}
               >
                 {item.icon}
                 <span className="min-w-0 flex-1 truncate text-[13px]">{item.label}</span>
                 {item.badge && item.badge > 0 ? (
                   <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-notVerified px-1 text-[10px] font-bold text-white">{item.badge > 9 ? '9+' : item.badge}</span>
                 ) : null}
-                <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${mPropsOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
               </button>
-              {/* Sub-links: μStudio-style expandable nested item */}
-              <div className={`overflow-hidden transition-all ${mPropsOpen ? 'mt-1 max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-                <div className="ml-6 flex flex-col border-l border-gray-200 py-1">
-                  {mPropsSubLinks.map((s) => (
-                    <button
-                      key={s.status || 'all'}
-                      type="button"
-                      onClick={() => openTab('myProperties', s.status)}
-                      aria-current={(searchParams.get('status') ?? '') === s.status && activeTab === 'myProperties' ? 'page' : undefined}
-                      className={`rounded-lg px-3 py-2 text-left text-[13px] transition-colors ${
-                        (searchParams.get('status') ?? '') === s.status && activeTab === 'myProperties'
-                          ? 'bg-gray-100 font-semibold text-gray-900'
-                          : 'text-gray-600 hover:bg-gray-50'
-                      }`}
-                    >
-                      {s.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : (
+            ),
+          )}
+        </nav>
+
+        <div className="mt-4 border-t border-gray-200 pt-2">
+          {footerItems.map((item) => (
             <button
               key={item.id}
               type="button"
               onClick={() => handleItem(item)}
-              aria-label={item.label}
-              aria-current={navActive(item.id) ? 'page' : undefined}
-              className={`relative shrink-0 lg:w-full lg:justify-start lg:px-3 ${itemClass(navActive(item.id))} ${
-                navActive(item.id) ? 'font-semibold' : ''
-              }`}
+              className="flex h-10 w-full items-center gap-3 rounded-xl px-3 text-[13px] text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
             >
               {item.icon}
-              <span className="hidden truncate text-[13px] lg:block">{item.label}</span>
-              {item.badge && item.badge > 0 ? (
-                <span className="absolute right-1.5 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-notVerified px-1 text-[10px] font-bold text-white lg:static lg:ml-auto">
-                  {item.badge > 9 ? '9+' : item.badge}
-                </span>
-              ) : null}
+              {item.label}
             </button>
-          ),
-        )}
-      </nav>
-
-      <div className="mt-auto hidden border-t border-gray-200 pt-2 lg:block">
-        {footerItems.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => handleItem(item)}
-            className="flex h-10 w-full items-center gap-3 rounded-xl px-3 text-[13px] text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900"
-          >
-            {item.icon}
-            {item.label}
-          </button>
-        ))}
-      </div>
-    </aside>
+          ))}
+        </div>
+      </aside>
+    </>
   );
 }
