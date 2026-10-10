@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useLanguage } from '../../contexts/LanguageContext';
 
@@ -87,6 +88,22 @@ export default function HeroSection(): JSX.Element {
                 {t('hero.line3')}
               </motion.span>
             </motion.h1>
+          </div>
+
+          {/* Listing type shortcuts */}
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/search?listingType=SALE"
+              className="inline-flex h-12 items-center rounded-full bg-white px-6 text-sm font-semibold text-gray-900 shadow-lg transition-all duration-200 hover:scale-[1.02] hover:bg-white/90"
+            >
+              {t('hero.forSale')}
+            </Link>
+            <Link
+              to="/search?listingType=RENT"
+              className="inline-flex h-12 items-center rounded-full border border-white/70 px-6 text-sm font-semibold text-white backdrop-blur-sm transition-all duration-200 hover:scale-[1.02] hover:bg-white/10"
+            >
+              {t('hero.forRent')}
+            </Link>
           </div>
         </motion.div>
       </div>

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Bell,
@@ -51,14 +51,25 @@ export default function Header(): JSX.Element {
   };
 
   /* On the home page the hero video runs edge-to-edge under the bar, so the
-     header floats transparently above it with light controls (see index.css). */
+     header floats transparently above it with light controls (see index.css).
+     Once the page starts scrolling the bar gets a solid surface background
+     and stays pinned to the top. */
   const isHome = location.pathname === '/';
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
     <header
       className={
         isHome
-          ? 'header-over-hero absolute inset-x-0 top-0 z-40 h-16 bg-transparent'
+          ? `fixed inset-x-0 top-0 z-40 h-16 transition-colors duration-300 ${
+              scrolled ? 'bg-surface shadow-sm' : 'header-over-hero bg-transparent'
+            }`
           : 'sticky top-0 z-40 h-16 bg-bg'
       }
     >
