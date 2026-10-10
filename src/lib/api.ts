@@ -20,7 +20,6 @@ import type {
   CurrencyCode,
   Language,
   LoginBody,
-  MobileMoneyProvider,
   PropertySearchQuery,
   PropertySummaryDTO,
   PublicPropertyDTO,
@@ -401,50 +400,17 @@ export const enquiriesApi = {
     api.patch<Record<string, unknown>>(`/enquiries/${id}/status`, { status }),
 };
 
-export interface PaymentLinkSummary {
-  _id: string;
-  token: string;
-  propertyId: { title: string; propertyId: string; listingType?: string; media?: Array<{ thumbUrl?: string; url?: string }> };
-  requesterUserId: { firstName?: string; lastName?: string; phone?: string; email?: string };
-  amount: number;
-  currency: string;
-  status: 'CREATED' | 'SENT' | 'OPENED' | 'PAID' | 'CANCELLED' | 'EXPIRED';
-  paidAt?: string;
-  createdAt: string;
-  paymentId?: { paymentReference?: string } | null;
-  url?: string;
-}
-
-export interface PaymentLinkResolved {
-  token: string;
-  status: 'CREATED' | 'SENT' | 'OPENED' | 'PAID' | 'CANCELLED' | 'EXPIRED';
-  amount: number;
-  currency: string;
-  note?: string;
-  expiresAt: string;
-  paidAt?: string;
-  payee: { firstName?: string; lastName?: string } | null;
-  property: { title: string; propertyId: string; listingType?: string; thumbnail?: string; price?: number; currency?: string } | null;
-}
-
-export const paymentLinksApi = {
-  create: (body: { propertyId: string; requesterUserId: string; amount: number; currency?: string; note?: string; enquiryId?: string; bookingId?: string }) =>
-    api.post<PaymentLinkSummary>('/payment-links', body),
-  listAgent: () => api.get<PaymentLinkSummary[]>('/payment-links/agent'),
-  resolve: (token: string) => api.get<PaymentLinkResolved>(`/payment-links/r/${token}`),
-  pay: (token: string, body: { provider: MobileMoneyProvider; payerPhone: string }) =>
+export const dealsApi = {
+  /* Deals are settled manually: the agent confirms the money was received and
+     the API records the payment and takes the property off the market. */
+  markPaid: (body: { kind: 'booking' | 'enquiry'; id: string }) =>
     api.post<{
       paymentReference: string;
       amount: number;
       currency: string;
-      status: string;
-      provider: MobileMoneyProvider;
-      payerPhone: string;
       paidAt: string;
-    }>(
-      `/payment-links/r/${token}/pay`,
-      body,
-    ),
+      propertyMarkedSold: boolean;
+    }>('/deals/mark-paid', body),
 };
 
 export const rentalApplicationsApi = {

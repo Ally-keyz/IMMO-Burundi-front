@@ -364,6 +364,22 @@
   }
 }
 
+/* On the home page the header floats over the full-bleed hero video, so its
+   controls turn light to stay readable on the dark footage. Popover panels are
+   portalled to <body>, so only the in-bar triggers are affected. */
+.header-over-hero button:not(.btn-primary):not(.btn-dark):not(.bg-ink),
+.header-over-hero a:not(.btn-primary):not(.btn-dark),
+.header-over-hero .header-logo-wordmark,
+.header-over-hero .header-logo-wordmark span {
+  color: #fff;
+}
+
+.header-over-hero button:not(.btn-primary):not(.btn-dark):not(.bg-ink):hover,
+.header-over-hero a:not(.btn-primary):not(.btn-dark):hover {
+  background-color: rgb(255 255 255 / 0.16);
+  color: #fff;
+}
+
 /* Prevent FOUC flash for skeleton shimmer */
 @keyframes shimmer {
   0% {

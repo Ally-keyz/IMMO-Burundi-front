@@ -11,10 +11,10 @@ const NO_CHROME_PATHS = ['/login', '/signup', '/register'];
 
 /**
  * Prefixed paths render standalone: no header, no account rail, no footer.
- * The payment link is reached from an SMS/WhatsApp link, so it behaves like
+ * The setup-account page is reached from an emailed link, so it behaves like
  * login/signup — its own full-height page instead of a panel inside the app.
  */
-const BARE_PREFIXES = ['/setup-account', '/pay'];
+const BARE_PREFIXES = ['/setup-account'];
 
 function isBarePath(pathname: string): boolean {
   return (
@@ -25,7 +25,7 @@ function isBarePath(pathname: string): boolean {
 
 /**
  * Routes that must never be indexed: authenticated areas, the listing
- * wizard, and transactional pages reached from an SMS link.
+ * wizard, and the account-setup page.
  *
  * The noindex is emitted here rather than per page so that every private
  * route is covered by construction and cannot drift. Public pages render
@@ -39,7 +39,6 @@ const PRIVATE_PATH_PREFIXES = [
   '/login',
   '/signup',
   '/register',
-  '/pay',
   '/setup-account',
 ];
 

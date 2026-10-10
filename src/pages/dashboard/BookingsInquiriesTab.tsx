@@ -1,17 +1,14 @@
 ﻿import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Building2, Check, Copy, MessageCircle, Phone, X } from 'lucide-react';
-import type { PaymentLinkSummary } from '../../lib/api';
+import { BadgeCheck, Building2, Check, MessageCircle, Phone, X } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { agentPropertiesApi, agentsApi, visitsApi, enquiriesApi, paymentLinksApi } from '../../lib/api';
+import { agentPropertiesApi, agentsApi, visitsApi, enquiriesApi, dealsApi } from '../../lib/api';
 import { formatNumber, timeAgo } from '../../lib/format';
 import { invalidateRailCounts } from '../../lib/railCounts';
 import EmptyState from '../../components/EmptyState';
 import Modal from '../../components/Modal';
-import PaymentLinkModal, { type PaymentLinkTarget } from './PaymentLinkModal';
 
 type BookingRow = Record<string, unknown>;
 type EnquiryRow = Record<string, unknown>;
-type LinkRow = PaymentLinkSummary;
 
 interface AgentIdentity {
   id: string;
@@ -36,7 +33,6 @@ export default function BookingsInquiriesTab(): JSX.Element {
 
   const [bookings, setBookings] = useState<BookingRow[]>([]);
   const [enquiries, setEnquiries] = useState<EnquiryRow[]>([]);
-  const [links, setLinks] = useState<LinkRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [subTab, setSubTab] = useState<'viewings' | 'buying' | 'messages'>('viewings');
@@ -53,9 +49,8 @@ export default function BookingsInquiriesTab(): JSX.Element {
     currency?: string;
   } | null>(null);
   const [dealSaving, setDealSaving] = useState(false);
-  const [payTarget, setPayTarget] = useState<PaymentLinkTarget | null>(null);
-  const [payOpen, setPayOpen] = useState(false);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [paidTarget, setPaidTarget] = useState<{ kind: 'booking' | 'enquiry'; id: string; title: string } | null>(null);
+  const [paidSaving, setPaidSaving] = useState(false);
   const [revealedPhones, setRevealedPhones] = useState<Record<string, boolean>>({});
 
   const load = useCallback(async () => {
@@ -76,7 +71,6 @@ export default function BookingsInquiriesTab(): JSX.Element {
     }
     setBookings(rows);
     setEnquiries(await enquiriesApi.inbox().catch(() => []));
-    setLinks(await paymentLinksApi.listAgent().catch(() => []));
     setLoading(false);
   }, []);
 
@@ -99,77 +93,7 @@ export default function BookingsInquiriesTab(): JSX.Element {
           ? 'bg-verified/10 text-verified'
           : 'bg-notVerified/10 text-notVerified';
 
-  const linkFor = useMemo(
-    () => (requesterId: string, propertyId: string): LinkRow | null => {
-      const match = links
-        .filter(
-          (l) =>
-            l.propertyId &&
-            (String((l.propertyId as any)._id || l.propertyId) === String(propertyId)) &&
-            l.requesterUserId &&
-            String((l.requesterUserId as any)._id || l.requesterUserId) === String(requesterId),
-        )
-        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
-      return match ?? null;
-    },
-    [links],
-  );
-
-  const linkUrl = (link: LinkRow): string => `${window.location.origin}/pay/${link.token}`;
-
-  const copyLink = async (link: LinkRow) => {
-    try {
-      await navigator.clipboard.writeText(linkUrl(link));
-      setCopiedId(String(link._id ?? link.token));
-      setTimeout(() => setCopiedId((current) => (current === String(link._id ?? link.token) ? null : current)), 2000);
-    } catch {
-      /* clipboard unavailable */
-    }
-  };
-
-  const linkChips = (requesterId: string, propertyId: string): JSX.Element | null => {
-    const link = linkFor(requesterId, propertyId);
-    if (!link) return null;
-    const copied = copiedId === String(link._id ?? link.token);
-    return (
-      <>
-        <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${link.status === 'PAID' ? 'bg-verified/10 text-verified' : 'bg-gray-100 text-gray-700'}`}>
-          {link.status === 'PAID' ? <Check className="h-3 w-3" aria-hidden="true" /> : null}
-          {t(`plink.status.${link.status}`)}
-        </span>
-        {/* Copy the payment link straight from the right end of the deal card. */}
-        <button
-          type="button"
-          onClick={() => void copyLink(link)}
-          title={copied ? t('dashboard.linkCopied') : t('dashboard.copyLink')}
-          aria-label={t('dashboard.copyLink')}
-          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors ${
-            copied ? 'bg-verified/10 text-verified' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
-          }`}
-        >
-          {copied ? <Check className="h-4 w-4" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
-        </button>
-      </>
-    );
-  };
-
-  const openPay = (row: BookingRow | EnquiryRow, requesterId: string, requesterName: string, kind: 'booking' | 'enquiry') => {
-    const property: any = row.property;
-    const propertyId = String(kind === 'booking' ? row.propId ?? '' : property?._id ?? row.propertyId ?? '');
-    const title = String(kind === 'booking' ? row.propTitle ?? '' : property?.title ?? '');
-    const price: any = property?.price;
-    setPayTarget({
-      requesterUserId: requesterId,
-      requesterName,
-      propertyId,
-      propertyTitle: title,
-      defaultAmount: price && typeof price === 'object' ? Number(price.amount) : undefined,
-      defaultCurrency: typeof price?.currency === 'string' ? price.currency : undefined,
-      enquiryId: kind === 'enquiry' ? String(row._id ?? '') : undefined,
-      bookingId: kind === 'booking' ? String(row._id ?? '') : undefined,
-    });
-    setPayOpen(true);
-  };
+  const isPaid = (row: BookingRow | EnquiryRow): boolean => Boolean((row as any).paidAt);
 
   const confirmDeal = async () => {
     if (!dealTarget) return;
@@ -184,22 +108,20 @@ export default function BookingsInquiriesTab(): JSX.Element {
       /* An answered enquiry leaves the inbox badge. */
       invalidateRailCounts();
       setDealTarget(null);
-      /* The deal is closed, so surface the payment link the customer needs to pay. */
-      if (dealTarget.requesterId && dealTarget.propertyId) {
-        setPayTarget({
-          requesterUserId: dealTarget.requesterId,
-          requesterName: dealTarget.requesterName,
-          propertyId: dealTarget.propertyId,
-          propertyTitle: dealTarget.title,
-          defaultAmount: dealTarget.amount,
-          defaultCurrency: dealTarget.currency,
-          enquiryId: dealTarget.kind === 'enquiry' ? dealTarget.id : undefined,
-          bookingId: dealTarget.kind === 'booking' ? dealTarget.id : undefined,
-        });
-        setPayOpen(true);
-      }
     } finally {
       setDealSaving(false);
+    }
+  };
+
+  const confirmPaid = async () => {
+    if (!paidTarget) return;
+    setPaidSaving(true);
+    try {
+      await dealsApi.markPaid({ kind: paidTarget.kind, id: paidTarget.id });
+      await load();
+      setPaidTarget(null);
+    } finally {
+      setPaidSaving(false);
     }
   };
 
@@ -213,9 +135,6 @@ export default function BookingsInquiriesTab(): JSX.Element {
     row: BookingRow | EnquiryRow,
     status: string,
   ) => {
-    const rowPrice: any = (row as any)?.property?.price;
-    const openPayAmount = rowPrice && typeof rowPrice === 'object' ? Number(rowPrice.amount) : undefined;
-    const openPayCurrency = typeof rowPrice?.currency === 'string' ? rowPrice.currency : undefined;
     return (
     <div className="flex flex-wrap items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
       {requesterPhone ? (
@@ -242,16 +161,21 @@ export default function BookingsInquiriesTab(): JSX.Element {
         </>
       ) : null}
       {dealStatus(status) && requesterId && propertyId ? (
-        <>
+        isPaid(row) ? (
+          <span className="inline-flex h-8 items-center gap-1.5 rounded-full bg-verified/10 px-3 text-[13px] font-semibold text-verified">
+            <Check className="h-4 w-4" aria-hidden="true" />
+            {t('dashboard.paid')}
+          </span>
+        ) : (
           <button
             type="button"
-            onClick={() => openPay(row, requesterId, requesterName, kind)}
-            className="inline-flex h-8 items-center gap-1.5 rounded-full bg-ink px-3 text-[13px] font-semibold text-white transition-colors hover:bg-gray-800"
+            onClick={() => setPaidTarget({ kind, id: String(row._id ?? ''), title: propTitle })}
+            className="inline-flex h-8 items-center gap-1.5 rounded-full bg-verified px-3 text-[13px] font-semibold text-white transition-colors hover:bg-verified/90"
           >
-            {t('dashboard.sendLink')}
+            <BadgeCheck className="h-4 w-4" aria-hidden="true" />
+            {t('dashboard.markPaid')}
           </button>
-          {linkChips(requesterId, propertyId)}
-        </>
+        )
       ) : status === 'PENDING' || status === 'NEW' || status === 'OPEN' || status === 'IN_PROGRESS' ? (
         <button
           type="button"
@@ -263,8 +187,6 @@ export default function BookingsInquiriesTab(): JSX.Element {
               requesterId,
               requesterName,
               propertyId,
-              amount: openPayAmount,
-              currency: openPayCurrency,
             })
           }
           className="inline-flex h-8 items-center gap-1.5 rounded-full border border-gray-200 px-3 text-[13px] font-semibold text-gray-700 transition-colors hover:bg-gray-50"
@@ -597,15 +519,19 @@ export default function BookingsInquiriesTab(): JSX.Element {
         </div>
       </Modal>
 
-      {/* Send payment link */}
-      <PaymentLinkModal
-        open={payOpen}
-        onClose={() => setPayOpen(false)}
-        target={payTarget}
-        onLinkCreated={() => {
-          void load();
-        }}
-      />
+      {/* Mark deal as paid */}
+      <Modal open={paidTarget !== null} onClose={() => setPaidTarget(null)} title={t('paid.title')} size="sm">
+        <p className="text-body text-gray-600">{t('paid.desc')}</p>
+        <p className="mt-2 truncate text-sm font-semibold text-gray-900">{paidTarget?.title}</p>
+        <div className="mt-6 flex items-center justify-end gap-3">
+          <button type="button" onClick={() => setPaidTarget(null)} className="btn-outline">
+            {t('common.cancel')}
+          </button>
+          <button type="button" disabled={paidSaving} onClick={() => void confirmPaid()} className="btn-primary">
+            {paidSaving ? t('common.loading') : t('paid.confirm')}
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 }

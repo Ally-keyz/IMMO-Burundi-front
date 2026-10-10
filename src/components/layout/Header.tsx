@@ -50,11 +50,18 @@ export default function Header(): JSX.Element {
     navigate('/');
   };
 
+  /* On the home page the hero video runs edge-to-edge under the bar, so the
+     header floats transparently above it with light controls (see index.css). */
+  const isHome = location.pathname === '/';
+
   return (
-    <header className="sticky top-0 z-40 h-16 bg-bg">
-      {/* scrollbar-hide: on very narrow phones the control cluster can exceed the
-          viewport. Scrolling the bar itself is preferable to letting the whole
-          page scroll sideways. */}
+    <header
+      className={
+        isHome
+          ? 'header-over-hero absolute inset-x-0 top-0 z-40 h-16 bg-transparent'
+          : 'sticky top-0 z-40 h-16 bg-bg'
+      }
+    >
       <div className="scrollbar-hide flex h-full items-center gap-1 overflow-x-auto px-3 sm:gap-2 lg:px-4">
         {/* Hamburger — toggles sidebar (logged in) or nav drawer (guests) */}
         <button
@@ -69,7 +76,7 @@ export default function Header(): JSX.Element {
         {/* Logo — unchanged brand/logo asset */}
         <Link to="/" className="flex shrink-0 items-center self-center" aria-label="IMMO BURUNDI — Home">
           <img src="/assets/brand/logo-crop.png" alt="IMMO BURUNDI" className="h-8 w-auto sm:h-9 md:h-10" />
-          <span className="ml-2 hidden text-lg font-bold text-gray-900 md:inline">
+          <span className="header-logo-wordmark ml-2 hidden text-lg font-bold text-gray-900 md:inline">
             <span className="text-blue-600">IMMO</span> BURUNDI
           </span>
         </Link>

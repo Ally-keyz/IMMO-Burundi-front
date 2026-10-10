@@ -25,7 +25,6 @@ import SignupPage from './pages/SignupPage';
 import SetupAccountPage from './pages/SetupAccountPage';
 import DashboardPage from './pages/DashboardPage';
 import SettingsPage from './pages/SettingsPage';
-import PaymentLinkPage from './pages/PaymentLinkPage';
 import ListPropertyPage from './pages/ListPropertyPage';
 import AboutPage from './pages/AboutPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -70,7 +69,6 @@ export default function App(): JSX.Element {
                     </ProtectedRoute>
                   }
                 />
-                <Route path="/pay/:token" element={<PaymentLinkPage />} />
                 <Route
                   path="/settings"
                   element={
