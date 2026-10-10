@@ -50,11 +50,8 @@ export default function HeroSection(): JSX.Element {
         >
           {/* Headline */}
           <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/85 md:text-base">
-              {t('hero.welcome')}
-            </p>
             <motion.h1
-              className="mt-4 font-extrabold uppercase leading-[0.93] tracking-tight text-white"
+              className="font-extrabold uppercase leading-[0.93] tracking-tight text-white"
               style={{ fontSize: 'clamp(2rem, 5.5vw, 5rem)' }}
               initial="hidden"
               animate="visible"
@@ -94,7 +91,7 @@ export default function HeroSection(): JSX.Element {
           <div className="flex flex-wrap items-center gap-3">
             <Link
               to="/search?listingType=SALE"
-              className="inline-flex h-12 items-center rounded-full bg-white px-6 text-sm font-semibold text-gray-900 shadow-lg transition-all duration-200 hover:scale-[1.02] hover:bg-white/90"
+              className="inline-flex h-12 items-center rounded-full bg-white px-6 text-sm font-semibold text-gray-950 shadow-lg transition-all duration-200 hover:scale-[1.02] hover:bg-white/90"
             >
               {t('hero.forSale')}
             </Link>

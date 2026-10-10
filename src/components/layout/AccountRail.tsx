@@ -32,7 +32,7 @@ interface RailItem {
   expand?: boolean;
 }
 
-export default function AccountRail(): JSX.Element | null {
+export default function AccountRail({ overlay = false }: { overlay?: boolean }): JSX.Element | null {
   const { t } = useLanguage();
   const { user, isAuthenticated, logout } = useAuth();
   const { railCollapsed, setRailCollapsed } = useNavShell();
@@ -171,7 +171,7 @@ export default function AccountRail(): JSX.Element | null {
     return (
       <aside
         aria-label={t('dashboard.title')}
-        className="sticky top-16 hidden h-[calc(100vh-64px)] w-[76px] shrink-0 flex-col self-start overflow-y-auto bg-bg px-2 py-3 lg:flex"
+        className={`${overlay ? 'fixed left-0 top-16 z-30 shadow-pop' : 'sticky top-16'} hidden h-[calc(100vh-64px)] w-[76px] shrink-0 flex-col self-start overflow-y-auto bg-bg px-2 py-3 lg:flex`}
       >
         {/* Profile */}
         <button type="button" onClick={() => navigate('/settings')} className="mb-3 flex h-12 w-full items-center justify-center" aria-label={t('dashboard.sidebar.profile')}>
@@ -247,7 +247,9 @@ aria-current={navActive(item.id) ? 'page' : undefined}
   return (
     <aside
       aria-label={t('dashboard.title')}
-      className="w-full bg-bg lg:sticky lg:top-16 lg:flex lg:h-[calc(100vh-64px)] lg:w-[252px] lg:shrink-0 lg:flex-col lg:self-start lg:overflow-y-auto lg:px-3 lg:py-4"
+      className={`w-full bg-bg lg:flex lg:h-[calc(100vh-64px)] lg:w-[252px] lg:shrink-0 lg:flex-col lg:overflow-y-auto lg:px-3 lg:py-4 ${
+        overlay ? 'lg:fixed lg:left-0 lg:top-16 lg:z-30 lg:shadow-pop' : 'lg:sticky lg:top-16 lg:self-start'
+      }`}
     >
       {/* Profile block (expanded only) */}
       <button

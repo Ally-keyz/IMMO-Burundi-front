@@ -53,6 +53,7 @@ export default function Layout({ children }: { children: ReactNode }): JSX.Eleme
   const { isAuthenticated } = useAuth();
   const bare = isBarePath(pathname);
   const showRail = !bare && isAuthenticated;
+  const overlayRail = pathname === '/' && showRail;
 
   return (
     <NavShellProvider>
@@ -60,7 +61,7 @@ export default function Layout({ children }: { children: ReactNode }): JSX.Eleme
       <div className="flex min-h-screen flex-col bg-bg">
         {bare ? null : <Header />}
         <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-          {showRail ? <AccountRail /> : null}
+          {showRail ? <AccountRail overlay={overlayRail} /> : null}
           <main className="min-w-0 flex-1">{children}</main>
         </div>
         {bare ? null : <Footer />}
